@@ -1,0 +1,41 @@
+def sqrt_2(iterations=10):
+    """Calculates sqrt(2) using Newton's method in O(1) space."""
+    x = 1.414  # Good initial guess for fast O(1) convergence
+    for _ in range(iterations):
+        x = 0.5 * (x + 2.0 / x)
+    return x
+
+
+def ramanujan_pi_optimized(k_terms):
+    """Calculates pi using iterative term-ratio recurrence in O(k) time and O(1) space."""
+    total_sum = 0.0
+    
+    # Base ratio term for k = 0: (4*0)! / ((0!)^4 * 396^0) = 1
+    term_ratio = 1.0
+    c = 396.0 ** 4  # Constant denominator factor per term
+
+    for k in range(k_terms):
+        if k > 0:
+            # Update term_ratio from previous k in O(1) operations
+            num_factor = (4 * k - 3) * (4 * k - 2) * (4 * k - 1) * (4 * k)
+            den_factor = (k ** 4) * c
+            term_ratio *= num_factor / den_factor
+
+        # Add current term: ratio * (1103 + 26390 * k)
+        total_sum += term_ratio * (1103 + 26390 * k)
+
+    # Constant multiplier: (2 * sqrt(2)) / 9801
+    factor = (2.0 * sqrt_2()) / 9801.0
+    
+    return 1.0 / (factor * total_sum)
+
+
+# User Input
+user_input = input("Enter the number of terms (k): ")
+
+if user_input.isdigit() and int(user_input) > 0:
+    k = int(user_input)
+    pi_val = ramanujan_pi_optimized(k)
+    print(f"Calculated Pi (k = {k}): {pi_val}")
+else:
+    print("Please enter a positive integer.")
